@@ -7,13 +7,13 @@ Installation
 ============
 
 CRUDClient
-—————
-	npm install
-	bower install
-	grunt serve / or use Netbeans Chrome Extension
+----------
+	- npm install
+	- bower install
+	- grunt serve / or use Netbeans Chrome Extension
 
 CRUDServer
-—————
-	mvn clean install
-	Project can be direct started in Netbeans 8 (Glassfish)
+----------
+	- mvn clean install
+	- Project can be direct started in Netbeans 8 (Glassfish)
 
