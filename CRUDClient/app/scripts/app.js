@@ -24,16 +24,16 @@ angular
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/list-customers', {
-        templateUrl: 'views/list-customers.html',
+      .when('/customer-list', {
+        templateUrl: 'views/customer-list.html',
         controller: 'ListCustomersCtrl'
       })
-      .when('/edit-customer/:id', {
-        templateUrl: 'views/edit-customer.html',
+      .when('/customer-detail/:id', {
+        templateUrl: 'views/customer-detail.html',
         controller: 'EditCustomerCtrl'
       })
-       .when('/create-customer', {
-        templateUrl: 'views/edit-customer.html',
+       .when('/customer-detail', {
+        templateUrl: 'views/customer-detail.html',
         controller: 'CreateCustomerCtrl'
       })
       .otherwise({

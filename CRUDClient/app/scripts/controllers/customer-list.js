@@ -17,12 +17,12 @@ angular.module('crudApp')
             
             /* callback for ng-click 'createCustomer': */
             $scope.createCustomer = function () {
-                $location.path('/edit-customer/0');
+                $location.path('/customer-detail/0');
             };
             
             /* callback for ng-click 'updateCustomer': */
             $scope.updateCustomer = function (customerId) {
-                $location.path('/edit-customer/' + customerId);
+                $location.path('/customer-detail/' + customerId);
             };
             
             /* callback for ng-click 'deleteCustomer': */
@@ -31,7 +31,7 @@ angular.module('crudApp')
                 customer[0].$remove({id: customerId}, function (data) {
                     // after update we have to update the customers array
                     $scope.customers = customerSvc.query();
-                    $location.path('/list-customers');
+                    $location.path('/customer-list');
                 }, function (err) {
                     alert('request failed');
                 });

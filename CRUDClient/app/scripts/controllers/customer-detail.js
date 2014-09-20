@@ -30,7 +30,7 @@ angular.module('crudApp')
                         customer.$update(function (data) {
                             // after update we have to also update the client model
                             $scope.customers = customerSvc.query();
-                            $location.path('/list-customers');
+                            $location.path('/customer-list');
                         }, function (err) {
                             alert('request failed');
                         });
@@ -48,13 +48,13 @@ angular.module('crudApp')
                         var savedCustomer = $scope.customerSvc.save({}, customer);
                         savedCustomer.$promise.then(function (result) {
                             $scope.customers = customerSvc.query();
-                            $location.path('/list-customers');
+                            $location.path('/customer-list');
                         });
                     };
 
                     /* callback for ng-click 'cancel': */
                     $scope.cancel = function () {
-                        $location.path('/list-customers');
+                        $location.path('/customer-list');
                     };
                 }
         );
