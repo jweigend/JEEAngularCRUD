@@ -13,10 +13,10 @@
             <tr ng-repeat="customer in customers">
                 <td>{{ customer.name}}</td>
                 <td>{{ customer.email }}</td>
-                <td><a ng-click="updateCustomer(customer.customerId)" class="btn btn-small btn-primary">edit</a></td>
+                <td><a ng-click="updateCustomer(customer.customerId)" class="btn btn-small btn-success">edit</a></td>
                 <td><a ng-click="deleteCustomer(customer.customerId)" class="btn btn-small btn-danger">delete</a></td>
             </tr>
         </tbody>
     </table>
-    <a ng-click="createCustomer()" class="btn btn-default">create new customer</a>
+    <a ng-click="createCustomer()" class="btn btn-primary">create new customer</a>
 </div>
