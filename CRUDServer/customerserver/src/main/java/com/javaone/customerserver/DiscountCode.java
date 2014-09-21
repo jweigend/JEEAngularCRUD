@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *    Java One 2014
+ *  (c) Johannes Weigend 
  */
 package com.javaone.customerserver;
 
@@ -93,10 +92,7 @@ public class DiscountCode implements Serializable {
             return false;
         }
         DiscountCode other = (DiscountCode) object;
-        if ((this.discountCode == null && other.discountCode != null) || (this.discountCode != null && !this.discountCode.equals(other.discountCode))) {
-            return false;
-        }
-        return true;
+        return !((this.discountCode == null && other.discountCode != null) || (this.discountCode != null && !this.discountCode.equals(other.discountCode)));
     }
 
     @Override
