@@ -1,0 +1,5 @@
+/CRUDServer/customerserver/target/
+/CRUDClient/app/bower_components
+/CRUDClient/node_modules
+/DemoClient/nbproject/private/
+/TestClient/nbproject/private/
