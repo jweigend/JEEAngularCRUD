@@ -13,6 +13,10 @@ frontend/.angular/
 *.code-workspace
 nbproject/private/
 
+# Runtime (Makefile)
+backend.log
+frontend.log
+
 # OS
 .DS_Store
 Thumbs.db
