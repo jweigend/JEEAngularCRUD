@@ -9,9 +9,11 @@ Originally developed for JavaOne 2014 (JEE 7 + AngularJS 1.2), modernized in 202
 - [Description JavaOne 2014 Demo](docs/Description-JavaOne2014-Demo.pdf)
 - [Single Page JEE Application - Presentation (JavaOne 2014)](docs/Single-Page-JEE-Application-JavaOne2014.pdf)
 
+This talk was awarded the **JavaOne Rock Star Award**.
+
 ## Tech Stack
 
-**Backend:** Jakarta EE 10, JAX-RS 3.1, CDI 4.0, JPA 3.1, Hibernate, WildFly 34, H2 Database
+**Backend:** Jakarta EE 10, JAX-RS 3.1, CDI 4.0, JPA 3.1, EclipseLink, Payara Micro 6, H2 Database
 
 **Frontend:** Angular 19, TypeScript, Bootstrap 5, Standalone Components, Signals
 
@@ -25,19 +27,20 @@ Originally developed for JavaOne 2014 (JEE 7 + AngularJS 1.2), modernized in 202
 
 ## Quick Start
 
-### Backend
-
 ```bash
-cd backend
-mvn wildfly:dev
+make start        # Start backend + frontend
+make stop         # Stop both
+make restart      # Restart both
+make status       # Show running status
+make help         # Show all targets
 ```
-
-This automatically provisions WildFly 34 via Galleon (no manual download needed),
-deploys the application, and enables hot-reload on code changes.
 
 The REST API is available at: `http://localhost:8080/customerserver/api/`
 
-API Endpoints:
+The Frontend is available at: `http://localhost:4200/`
+
+### API Endpoints
+
 - `GET /api/customers` - List all customers
 - `GET /api/customers/{id}` - Get customer by ID
 - `POST /api/customers` - Create customer
@@ -45,27 +48,6 @@ API Endpoints:
 - `DELETE /api/customers/{id}` - Delete customer
 - `GET /api/discount-codes` - List discount codes
 - `GET /api/micro-markets` - List micro markets
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npx ng serve
-```
-
-Open `http://localhost:4200` in your browser.
-
-The Angular dev server proxies `/api` requests to the backend at `localhost:8080`.
-
-## Docker
-
-```bash
-docker-compose up --build
-```
-
-- Frontend: `http://localhost:4200`
-- Backend API: `http://localhost:8080/customerserver/api/`
 
 ## Project Structure
 
@@ -84,6 +66,8 @@ frontend/                   Angular 19 SPA
     core/models/            TypeScript interfaces
     core/services/          HttpClient services
     features/               Lazy-loaded route components
+
+docs/                       Original JavaOne 2014 presentation materials
 ```
 
 ## Migration from Original (2014 -> 2026)
@@ -92,8 +76,8 @@ frontend/                   Angular 19 SPA
 |-----------|------|------|
 | Java | 8 | 21 |
 | API | Java EE 7 | Jakarta EE 10 |
-| App Server | GlassFish 4 | WildFly 34 |
-| ORM | EclipseLink 2.5 | Hibernate 6.6 |
+| App Server | GlassFish 4 | Payara Micro 6 |
+| ORM | EclipseLink 2.5 | EclipseLink (in Payara) |
 | Frontend | AngularJS 1.2 | Angular 19 |
 | UI | Bootstrap 3.2 | Bootstrap 5.3 |
 | Package Mgr | Bower | npm |

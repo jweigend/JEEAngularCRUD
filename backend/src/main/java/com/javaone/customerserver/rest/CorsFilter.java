@@ -7,7 +7,7 @@ import jakarta.ws.rs.ext.Provider;
 
 // @Provider registers this filter globally for all JAX-RS responses.
 // CORS (Cross-Origin Resource Sharing) is required during development because the Angular
-// dev server (localhost:4200) and the WildFly backend (localhost:8080) run on different origins.
+// dev server (localhost:4200) and the Payara Micro backend (localhost:8080) run on different origins.
 // Browsers block cross-origin requests by default; these headers tell the browser it's allowed.
 //
 // Note: In production (Docker/Nginx), the reverse proxy serves both on the same origin,

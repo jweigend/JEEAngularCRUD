@@ -2,13 +2,16 @@ SHELL := /bin/bash
 
 BACKEND_DIR  := backend
 FRONTEND_DIR := frontend
-WILDFLY_CLI  := $(BACKEND_DIR)/target/server/bin/jboss-cli.sh
 
 BACKEND_LOG  := backend.log
 FRONTEND_LOG := frontend.log
 
+PAYARA_VERSION := 6.2025.11
+PAYARA_JAR     := $(HOME)/.m2/repository/fish/payara/extras/payara-micro/$(PAYARA_VERSION)/payara-micro-$(PAYARA_VERSION).jar
+BACKEND_WAR    := $(BACKEND_DIR)/target/customerserver.war
+
 .PHONY: start stop restart \
-        start-backend stop-backend restart-backend \
+        build-backend start-backend stop-backend restart-backend \
         start-frontend stop-frontend restart-frontend \
         status help
 
@@ -24,70 +27,73 @@ stop: stop-frontend stop-backend ## Stop both (graceful)
 
 restart: stop start ## Restart both
 
-# --- Backend (WildFly 34) ---------------------------------------------------
+# --- Backend (Payara Micro 6) ------------------------------------------------
 
-start-backend: ## Start WildFly backend
+build-backend: ## Build backend WAR (mvn package)
+	@echo "Building backend..."; \
+	cd $(BACKEND_DIR) && mvn -q package -DskipTests; \
+	echo "  Built: $(BACKEND_WAR)"
+
+start-backend: ## Start Payara Micro backend
 	@if ss -tlnp 2>/dev/null | grep -q ':8080 '; then \
 		echo "Backend already running on port 8080"; \
 		exit 0; \
 	fi; \
-	echo "Starting backend (WildFly 34)..."; \
-	setsid sh -c 'cd $(BACKEND_DIR) && exec mvn wildfly:dev' > $(BACKEND_LOG) 2>&1 & \
-	printf "  Waiting for WildFly "; \
-	for i in $$(seq 1 90); do \
-		if grep -q "started in" $(BACKEND_LOG) 2>/dev/null; then \
+	if [ ! -f $(BACKEND_WAR) ]; then \
+		echo "WAR not found, building..."; \
+		cd $(BACKEND_DIR) && mvn -q package -DskipTests; \
+	fi; \
+	if [ ! -f $(PAYARA_JAR) ]; then \
+		echo "Payara Micro JAR not found, downloading..."; \
+		cd $(BACKEND_DIR) && mvn -q dependency:resolve; \
+	fi; \
+	echo "Starting backend (Payara Micro 6)..."; \
+	setsid java -jar $(PAYARA_JAR) \
+		--deploy $(BACKEND_WAR) \
+		--nocluster \
+		--contextroot customerserver \
+		> $(BACKEND_LOG) 2>&1 & \
+	printf "  Waiting for Payara Micro "; \
+	for i in $$(seq 1 60); do \
+		if grep -q "ready in" $(BACKEND_LOG) 2>/dev/null; then \
 			echo ""; \
 			echo "  Backend ready: http://localhost:8080/customerserver/api/"; \
 			exit 0; \
 		fi; \
-		if ! pgrep -f '[w]ildfly:dev' >/dev/null 2>&1; then \
+		if ! pgrep -f '[p]ayara-micro.*jar' >/dev/null 2>&1; then \
 			echo ""; \
 			echo "  ERROR: Backend process died. Check $(BACKEND_LOG)"; \
 			exit 1; \
 		fi; \
 		printf "."; \
-		sleep 2; \
+		sleep 1; \
 	done; \
 	echo ""; \
-	echo "  TIMEOUT after 3 min. Check $(BACKEND_LOG)"; exit 1
+	echo "  TIMEOUT after 60s. Check $(BACKEND_LOG)"; exit 1
 
-stop-backend: ## Stop WildFly gracefully
-	@if ! pgrep -f '[w]ildfly:dev' >/dev/null 2>&1; then \
+stop-backend: ## Stop Payara Micro gracefully
+	@if ! pgrep -f '[p]ayara-micro.*jar' >/dev/null 2>&1; then \
 		echo "Backend is not running."; \
 		exit 0; \
 	fi; \
 	echo "Stopping backend..."; \
-	if [ -x $(WILDFLY_CLI) ]; then \
-		echo "  Sending shutdown via WildFly CLI..."; \
-		$(WILDFLY_CLI) --connect command=:shutdown 2>/dev/null || true; \
-	else \
-		echo "  WildFly CLI not found, sending SIGTERM..."; \
-		pkill -TERM -f '[w]ildfly:dev' 2>/dev/null || true; \
-	fi; \
+	pkill -TERM -f '[p]ayara-micro.*jar' 2>/dev/null || true; \
 	echo "  Waiting for process to exit..."; \
-	for i in $$(seq 1 30); do \
-		if ! pgrep -f '[w]ildfly:dev' >/dev/null 2>&1; then \
-			echo "  Backend stopped gracefully."; \
-			exit 0; \
-		fi; \
-		sleep 1; \
-	done; \
-	echo "  Still running after 30s, sending SIGTERM..."; \
-	pkill -TERM -f '[w]ildfly:dev' 2>/dev/null || true; \
-	for i in $$(seq 1 10); do \
-		if ! pgrep -f '[w]ildfly:dev' >/dev/null 2>&1; then \
+	for i in $$(seq 1 15); do \
+		if ! pgrep -f '[p]ayara-micro.*jar' >/dev/null 2>&1; then \
 			echo "  Backend stopped."; \
 			exit 0; \
 		fi; \
 		sleep 1; \
 	done; \
-	echo "  Still running after 40s, sending SIGKILL (last resort)..."; \
-	pkill -KILL -f '[w]ildfly:dev' 2>/dev/null || true; \
-	pkill -KILL -f '[j]boss.*standalone' 2>/dev/null || true; \
+	echo "  Still running after 15s, sending SIGKILL..."; \
+	pkill -KILL -f '[p]ayara-micro.*jar' 2>/dev/null || true; \
 	sleep 1; \
 	echo "  Backend killed."
 
 restart-backend: stop-backend start-backend ## Restart backend
+
+rebuild-backend: build-backend restart-backend ## Rebuild + restart backend
 
 # --- Frontend (Angular 19) --------------------------------------------------
 
@@ -142,8 +148,8 @@ restart-frontend: stop-frontend start-frontend ## Restart frontend
 
 status: ## Show running status
 	@echo "=== Backend ==="
-	@if pgrep -f '[w]ildfly:dev' >/dev/null 2>&1; then \
-		echo "  Running (PID $$(pgrep -f '[w]ildfly:dev'))"; \
+	@if pgrep -f '[p]ayara-micro.*jar' >/dev/null 2>&1; then \
+		echo "  Running (PID $$(pgrep -f '[p]ayara-micro.*jar' | head -1))"; \
 	else \
 		echo "  Stopped"; \
 	fi

@@ -22,7 +22,7 @@ import { RouterLink } from '@angular/router';
     <div class="row">
       <div class="col-md-4">
         <h2>Backend</h2>
-        <p>Jakarta EE 10 with JAX-RS 3.1, CDI 4.0, JPA 3.1 and Hibernate on WildFly 34.</p>
+        <p>Jakarta EE 10 with JAX-RS 3.1, CDI 4.0, JPA 3.1 and EclipseLink on Payara Micro 6.</p>
       </div>
       <div class="col-md-4">
         <h2>Frontend</h2>

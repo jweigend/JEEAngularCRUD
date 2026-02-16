@@ -27,10 +27,10 @@ public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // @GeneratedValue(IDENTITY) lets the database auto-generate the primary key.
+    // @GeneratedValue(AUTO) lets the JPA provider choose the best ID strategy.
     // Migration note: The original 2014 version generated IDs client-side in JavaScript.
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "CUSTOMER_ID")
     private Integer customerId;
 
